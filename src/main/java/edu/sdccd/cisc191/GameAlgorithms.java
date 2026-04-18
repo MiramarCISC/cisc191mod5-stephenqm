@@ -170,12 +170,12 @@ public class GameAlgorithms {
             return false;
         }
 
-        if (node.matchName().equals(target)) {
+        if (node.matchName.equals(target)) {
             return true;
         }
 
-        return containsMatchHelper(node.left(), target)
-                || containsMatchHelper(node.right(), target);
+        return containsMatchHelper(node.left, target)
+                || containsMatchHelper(node.right, target);
     }
 
     /**

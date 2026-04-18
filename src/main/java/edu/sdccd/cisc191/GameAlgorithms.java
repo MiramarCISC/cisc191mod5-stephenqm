@@ -22,8 +22,7 @@ public class GameAlgorithms {
      * @return index of target, or -1 if not found
      */
     public static int findMatchRecursive(int[] sortedMatchIds, int target) {
-        // TODO: Replace this stub by calling a recursive helper method.
-        return -999;
+        return findMatchRecursiveHelper(sortedMatchIds, target, 0, sortedMatchIds.length - 1);
     }
 
     /**
@@ -36,8 +35,11 @@ public class GameAlgorithms {
      * @return index of target, or -1 if not found
      */
     private static int findMatchRecursiveHelper(int[] sortedMatchIds, int target, int low, int high) {
-        // TODO: Implement recursive binary search.
-        return -999;
+        if (low > high) return -1;
+        int mid = low + (high - low) / 2;
+        if (sortedMatchIds[mid] == target) return mid;
+        if (sortedMatchIds[mid] < target) return findMatchRecursiveHelper(sortedMatchIds, target, mid + 1, high);
+        return findMatchRecursiveHelper(sortedMatchIds, target, low, mid - 1);
     }
 
     /**
@@ -48,8 +50,14 @@ public class GameAlgorithms {
      * @return index of target, or -1 if not found
      */
     public static int findMatchIterative(int[] sortedMatchIds, int target) {
-        // TODO: Implement iterative binary search with a loop.
-        return -999;
+        int low = 0, high = sortedMatchIds.length - 1;
+        while (low <= high) {
+            int mid = low + (high - low) / 2;
+            if (sortedMatchIds[mid] == target) return mid;
+            if (sortedMatchIds[mid] < target) low = mid + 1;
+            else high = mid - 1;
+        }
+        return -1;
     }
 
     /**
@@ -66,8 +74,13 @@ public class GameAlgorithms {
      * @return number of connected walkable tiles
      */
     public static int countConnectedTilesRecursive(char[][] map, int startRow, int startCol) {
-        // TODO: Implement recursive flood-fill / connected tile counting.
-        return -999;
+        if (isOutOfBounds(map, startRow, startCol) || map[startRow][startCol] != '.') return 0;
+        map[startRow][startCol] = 'V';
+        return 1
+                + countConnectedTilesRecursive(map, startRow - 1, startCol)
+                + countConnectedTilesRecursive(map, startRow + 1, startCol)
+                + countConnectedTilesRecursive(map, startRow, startCol - 1)
+                + countConnectedTilesRecursive(map, startRow, startCol + 1);
     }
 
     /**
@@ -79,8 +92,25 @@ public class GameAlgorithms {
      * @return number of connected walkable tiles
      */
     public static int countConnectedTilesIterative(char[][] map, int startRow, int startCol) {
-        // TODO: Implement iterative flood-fill / connected tile counting.
-        return -999;
+        if (isOutOfBounds(map, startRow, startCol) || map[startRow][startCol] != '.') return 0;
+        Deque<CellPosition> stack = new ArrayDeque<>();
+        pushNeighbor(stack, startRow, startCol);
+        map[startRow][startCol] = 'V';
+        int count = 0;
+        int[][] dirs = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}};
+        while (!stack.isEmpty()) {
+            CellPosition current = stack.pop();
+            count++;
+            for (int[] dir : dirs) {
+                int newRow = current.row() + dir[0];
+                int newCol = current.col() + dir[1];
+                if (!isOutOfBounds(map, newRow, newCol) && map[newRow][newCol] == '.') {
+                    map[newRow][newCol] = 'V';
+                    pushNeighbor(stack, newRow, newCol);
+                }
+            }
+        }
+        return count;
     }
 
     /**
@@ -92,8 +122,7 @@ public class GameAlgorithms {
      * @return true if found, false otherwise
      */
     public static boolean containsMatch(BracketNode root, String target) {
-        // TODO: Replace this stub by calling a helper method.
-        return false;
+        return containsMatchHelper(root, target);
     }
 
     /**
@@ -104,8 +133,9 @@ public class GameAlgorithms {
      * @return true if found, false otherwise
      */
     private static boolean containsMatchHelper(BracketNode node, String target) {
-        // TODO: Implement recursive tree search.
-        return false;
+        if (node == null) return false;
+        if (node.getMatchName().equals(target)) return true;
+        return containsMatchHelper(node.getLeft(), target) || containsMatchHelper(node.getRight(), target);
     }
 
     /**
@@ -122,3 +152,5 @@ public class GameAlgorithms {
         stack.push(new CellPosition(row, col));
     }
 }
+
+//
